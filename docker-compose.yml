@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile.php
+    container_name: poc_sse_php_fpm
+    volumes:
+      - ./src:/var/www/html
+    restart: unless-stopped
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: poc_sse_nginx
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - php
+    restart: unless-stopped

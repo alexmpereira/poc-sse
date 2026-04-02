@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POC SSE - PHP</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f9; }
+        #log { background: #fff; border: 1px solid #ccc; padding: 15px; max-height: 400px; overflow-y: auto; }
+        .event { margin: 5px 0; padding: 5px; border-bottom: 1px solid #eee; }
+    </style>
+</head>
+<body>
+    <h1>POC: Server-Sent Events (SSE)</h1>
+    <p>Escutando eventos do servidor...</p>
+
+    <div id="log"></div>
+
+    <script>
+        const logDiv = document.getElementById('log');
+
+        // Instancia o EventSource apontando para o script PHP
+        const eventSource = new EventSource('server.php');
+
+        // Escuta o evento padrão de mensagem
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+
+            const p = document.createElement('p');
+            p.className = 'event';
+            p.textContent = `[${data.time}] Evento #${data.counter} recebido com sucesso.`;
+
+            // Adiciona a nova mensagem no topo do log
+            logDiv.prepend(p);
+        };
+
+        // Tratamento de erros e reconexões
+        eventSource.onerror = function(error) {
+            console.error('Erro na conexão SSE:', error);
+            // O EventSource tentará reconectar automaticamente por padrão.
+        };
+    </script>
+</body>
+</html>

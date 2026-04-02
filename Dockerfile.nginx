@@ -1,0 +1,16 @@
+FROM nginx:alpine
+
+# Cria o diretório para os certificados
+RUN mkdir -p /etc/nginx/ssl
+
+# Gera um certificado autoassinado para habilitar o HTTPS e, consequentemente, o HTTP/2
+RUN apk add --no-cache openssl && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/nginx/ssl/key.pem \
+    -out /etc/nginx/ssl/cert.pem \
+    -subj "/C=BR/ST=SP/L=SP/O=POC SSE/OU=IT/CN=localhost"
+
+# Copia a configuração customizada do Nginx
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80 443
